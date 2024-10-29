@@ -35,8 +35,8 @@ l_avg = dt.timedelta(minutes=3)   # How big of an averaging window you want
 l_exc = dt.timedelta(seconds=30)  # Length of half exclusion zone you want
 l_inc = dt.timedelta(minutes=2)   # Time Stepping
 # %
-start_time = dt.datetime(2021,10,1,1,0,0)
-end_time   = dt.datetime(2021,10,31,23,0,0)
+start_time = dt.datetime(2022,3,1,1,0,0)
+end_time   = dt.datetime(2022,3,30,23,0,0)
 
 # %% Smell shocks
 candidates_FF = []     # This is where the times for your Fast Forward shock candidates will be stored
@@ -63,8 +63,7 @@ while t_now < end_time:
 
     if Bd/Bu > 1.2 and Nd/Nu > 1.2 and (Vd-Vu >= 20) : # Condition for Fast Forward shock
         print(["PyTRUFLS :: I smell a candidate Fast Forward shock at ", t_now] )
-        candidates_FF.append(t_now)
-
+        candidates_FF.append(t_now) # Pop into list of Fast Forward
 
     # Smell Fast Reverse shocks
     t_ds = t_now - (l_avg + l_exc)   # Start of candidate upstream window time
@@ -81,12 +80,9 @@ while t_now < end_time:
     Vd = df_swa.loc[t_ds:t_de]['V'].mean(skipna=True) # Mean downstream ion speed
     Nd = df_swa.loc[t_ds:t_de]['N'].mean(skipna=True) # Mean downstream density
 
-    if Bd/Bu > 1.2 and Nd/Nu > 1.2 and (Vd-Vu >= 20) : # Condition for Fast Forward shock
+    if Bd/Bu > 1.2 and Nd/Nu > 1.2 and (Vu-Vd >= 20) : # Condition for Fast Forward shock
         print(["PyTRUFLS :: I smell a candidate Fast Reverse shock at ", t_now] )
-        candidates_FR.append(t_now)
-
-
-
+        candidates_FR.append(t_now) # Pop into Fast Reverse list
     t_now = t_now + l_inc
 
 
